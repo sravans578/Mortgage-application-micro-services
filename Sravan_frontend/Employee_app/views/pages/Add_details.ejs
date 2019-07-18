@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+<div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4" style="text-align: center;"> Send Employee Details</h1>
+          <p class="lead text-center"> Share your details with a third-party </p>
+        </div>
+      </div>
+
+<div class="container" style=" margin-top: 5%;">
+        <form id="submit_details" action="https://empbackend.azurewebsites.net/employer/recieveFromEmployer">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="Application number"> Application number</label>
+                        <input type="text" class="form-control" id="app_no" placeholder="Eg: F31212121" required="required" name="app_no">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="Broker name">Enter name of Broker</label>
+                        <input type="text" class="form-control" id="broker_name" placeholder="Broker name" required="required" name="broker_name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="URL">Broker URL </label>
+                  <input type="text" class="form-control" id="URL" placeholder="https://prod-29.canadacentral.logic.azure.com:443/workflows/17dc5a6fb1fc44f294e45298b92d38c4/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ZTKHLHeZ2Jj-eWAbey1FGbgQuiDGoKbmOiQh6bZgBCY" required="required" name="URL">
+                </div>
+             
+                <button type="submit" class=" btn btn-success btn-block">Submit Request</button>
+              </form>
+</div>
+
+<div class="modal fade" id="popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Application Status</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="content">
+          hi
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  $( "#submit_details" ).submit(function( event ) {
+      event.preventDefault();
+      var $form = $(this),
+        appno = $form.find( "input[name='app_no']" ).val(),
+        url_logic= $form.find( "input[name='URL']" ).val(),
+        url1 = $form.attr( "action" );
+        let emp_id = sessionStorage.getItem('Emp_ID');
+     
+      // POST request
+      var posting = $.post( url1, { appno: appno, employeeID : emp_id, url: url_logic } );
+     
+      // Response
+      posting.done(function(data) {
+        console.log(data);
+        if(data == "ok"){
+
+          $("#content").html("Application Submitted Succesfully!!");
+          jQuery("#popup").modal('show');
+            
+        }
+
+        else{
+          alert(res.error)
+        }
+
+      
+      });
+    });
+</script>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        function display(pageName,elmnt,color) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+            document.getElementById(pageName).style.display = "block";
+            elmnt.style.backgroundColor = color;
+        }
+
+        function Validations568(txt, event) {
+            let char = (event.which) ? event.which : event.keyCode;
+            if (char == 46) {
+                return txt.value.indexOf('.') === -1;
+            } else {
+                if (char > 31 && (char < 48 || char > 57))
+                    return false;
+            }
+            return true;
+        }
+
+        function getStatus() {
+            let url = "http://localhost:portofMBR";
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    console.log("got response");
+                    let result = JSON.parse(this.response);
+                    document.getElementById("statusmsg").innerHTML = "Your Application status is: " + result.mortgageStatus;
+                    console.log(result);
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+
+        }
+        function mbrform() {
+            var name = document.getElementById("name").value;
+            var address = document.getElementById("address").value;
+            var phone = document.getElementById("phone").value;
+            var aboutEmployer = document.getElementById("aboutEmployer").value;
+            //validations for inputs
+            if (name == null || name === "") {
+                alert("Please enter the name");
+                name.focus();
+                return false;
+            }
+            if (address == null || address === "") {
+                alert("Please enter the address");
+                address.focus();
+                return false;
+            }
+            if (phone == null || phone === "") {
+                alert("Please enter the phone");
+                phone.focus();
+                return false;
+            }
+            if (aboutEmployer == null || aboutEmployer === "") {
+                alert("Please enter Employer details");
+                aboutEmployer.focus();
+                return false;
+            }
+            let url = "http://localhost:portofMBR";
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    console.log("got response");
+                    let result = JSON.parse(this.response);
+                    document.getElementById("applicationNum").innerHTML = "Your Application id is: " + result.appid;
+                    document.getElementById("brokerAddress").innerHTML = "Broker's webservice is: " + result.webservice;
+                    console.log(result);
+                }
+            };
+            xhttp.open("POST", url, true);
+            xhttp.send(JSON.stringify({name: name, address: address, phone:phone, aboutEmployer:aboutEmployer}));
+        }
+    </script>
+    <style>
+        * {box-sizing: border-box}
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial;
+        }
+
+        .tablink {
+            background-color: #555;
+            color: white;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            font-size: 17px;
+            width: 25%;
+        }
+
+        .tablink:hover {
+            background-color: #777;
+        }
+
+        .tabcontent {
+            padding: 100px 20px;
+            height: 100%;
+        }
+        .modal-body{
+            text-align: center}
+
+        h1{text-align: center}
+        .card-header{background: beige}
+        .submit{margin-left: 45%; background: chocolate}
+        .card{width: 50rem; height: 25%; margin-left: 10%; margin-top: 10px; padding-bottom: 20px; background:lavender}
+        #statusmsg{ text-align: center}
+
+    </style>
+
+
+</head>
+<body>
+
+<button class="tablink" onclick="display('Form', this,'green')" id="defaultTab">Mortgage Form</button>
+<button class="tablink" onclick="display('Status', this, 'green')">Mortgage Status</button>
+<div id="Form" class="tabcontent">
+    <div class="container">
+        <div class="card" >
+            <h1 class="card-header">
+                Please fill the details</h1>
+            <div>
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label for="name"><h4>Name</h4></label>
+                        <input type="text" maxlength="10" class="form-control" id="name" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="address"><h4>Address</h4></label>
+                        <input type="text" class="form-control" id="address" placeholder="Enter your address">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone"><h4>Phone number</h4></label>
+                        <input type="text" class="form-control" onkeypress="return Validations568(this,event)" id="phone" placeholder="Enter phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="aboutEmployer"><h4>Employer name</h4></label>
+                        <input type="text" class="form-control" id="aboutEmployer" placeholder="Enter your employer name">
+                    </div>
+                    <button type="button" class="submit" onclick="mbrform()" data-toggle="modal" data-target="#myModal" style = "margin-top: 3.5%"><h3>Submit</h3></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Thanks for your mortgage request</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <p id="applicationNum">1111</p>
+                <P id="brokerAddress">www.www@www</P>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="Status" class="tabcontent" onclick="getStatus()">
+    <div class="container">
+        <div class="card" >
+            <h1 class="card-header">
+                Status of your mortgage </h1>
+            <div>
+                <p id="statusmsg">Approved/Pending/Refused</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // setting default tab
+    document.getElementById("defaultTab").click();
+</script>
+
+</body>
+</html>

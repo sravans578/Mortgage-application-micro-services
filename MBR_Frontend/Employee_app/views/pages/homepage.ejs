@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        h1{text-align: center}
+        .card-header{background: beige}
+        .Signin{margin-left: 45%; background: chocolate}
+        .card{width: 40rem; height: 25%; margin-left: 20%; margin-top: 10%; padding-bottom: 20px; background:lavender}
+    </style>
+    <script>
+
+        function login() {
+            let uname = document.getElementById("username").value;
+            let pwd = document.getElementById("password").value;
+            //validations for inputs
+            if (uname == null || uname === "") {
+                alert("Please enter the username.");
+                // uname.focus();
+                return false;
+            }
+            if (pwd == null || pwd === "") {
+                alert("Please enter the password.");
+                // pwd.focus();
+                return false;
+            }
+            let url = "https://mbrback.azurewebsites.net/loginmbr019?username=" + uname + "&password=" + pwd;
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    let result = JSON.parse(this.response);
+                    console.log(result);
+                    if(result.error == "Some error occurred"){  
+                        alert("Login Failed");
+                    }
+                    else if(result.success == "Login Successful"){
+                        location.href = "/mbrhomepage";
+                    }
+                }
+            };
+            xhttp.open("POST", url, true);
+            xhttp.send();
+        }
+    </script>
+</head>
+    <div class="container">
+    <div class="card" >
+        <h1 class="card-header">
+            Login</h1>
+        <div>
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="username"><h4>Username</h4></label>
+                    <input type="text"  maxlength="10" class="form-control" id="username" placeholder="Enter your username" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password"><h4>Password</h4></label>
+                    <input type="password" minlength="8"  class="form-control" id="password" placeholder="Enter your password">
+                </div>
+                <input type="button" class="Signin" onclick="login()" style = "margin-top: 3.5%" value="Sign in">
+
+            </form>
+        </div>
+    </div>
+</div>

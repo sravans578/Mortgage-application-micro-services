@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+<style type="text/css">
+
+	.login-form { 
+
+		width: 500px;
+    	margin: 100px auto;
+	}
+    .login-form form {
+    	margin-bottom: 15px;
+        background: #e6e9ee;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+    }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
+    .form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .btn {        
+        font-size: 15px;
+        font-weight: bold;
+       
+        left: 44%;
+        width: 200px;
+        margin-left: auto;
+        margin-right: auto;
+        bottom: 75%;
+  
+}
+    
+    
+</style>
+</head>
+<body>
+        <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+                <a class="navbar-brand" href="#">Delay monitor</a>
+        </nav>
+    <form id="req" action="http://localhost:1200/employer/test">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="Application number"> Number of requests</label>
+                <input type="number" class="form-control" id="numberOfRequests" placeholder=" example : 2" required="required" name="numberOfRequests">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Broker name">Time interval (in ms ) </label>
+                <input type="number" class="form-control" id="timeInterval" placeholder=" Eg : 100 " required="required" name="timeInterval">
+          </div>
+        </div>
+        
+         <button type="submit" class="  btn btn-success btn-block">Submit Request</button>   
+          
+    </form>
+
+    <div  id="userTable class="col-md-6" style="border-left: 10px solid red; ">
+        <table class="table" id="mytable">
+            <thead>
+              <tr>
+                <th scope="col" data-feild="response">Response time (server) </th>
+                <th scope="col" data-feild="total_delay">Total</th>
+                <th scope="col" data-feild="delay">Network delay</th>
+              </tr>
+            </thead>
+
+            <tbody>
+                
+            </tbody>
+            
+          </table>
+      </div>
+   
+</div>
+</body>
+
+<script>
+
+    $( "#req" ).submit(function( event ) {
+      event.preventDefault();
+      var $form = $(this),
+        req_number = $form.find( "input[name='numberOfRequests']" ).val(),
+        time_interval = $form.find( "input[name='timeInterval']" ).val(),
+        url = $form.attr( "action" );
+
+        var a="<tbody>";
+        for(var i = 0; i < req_number; i++){
+            setTimeout(function () {
+               // POST request
+                t = performance.now();
+                var posting = $.post( url, {} );
+     
+                // Response
+                posting.done(function(data) {
+                    t1 = performance.now();
+                    n_delay = t1-t-data.response;
+                    console.log(data.response);
+                    $('<tr><td>'+data.response+" ms"+'</td><td>'+(t1-t)+" ms"+'</td><td>'+n_delay+" ms"+'</td></tr>').appendTo("#mytable tbody");
+            }, time_interval);
+       
+        });
+        }
+
+        
+    
+
+     
+    
+    });
+    </script>
+     
+</html>  
